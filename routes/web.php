@@ -2,16 +2,18 @@
 // File: routes/web.php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProductController; // Tambahkan ini di bagian atas
+use App\Http\Controllers\ProductController;
+use App\Http\Controllers\ExpiredProductController; // TAMBAH INI
 
 Route::get('/', function () {
     return view('welcome');
 });
 
-// Ini akan membuat 7 rute CRUD secara otomatis:
-// GET /products          -> ProductController@index
-// GET /products/create   -> ProductController@create
-// POST /products         -> ProductController@store
-// GET /products/{product} -> ProductController@show
-// ...dst
+// Rute CRUD produk
 Route::resource('products', ProductController::class);
+
+// TAMBAHAN: Rute untuk monitoring expired products
+Route::prefix('products')->group(function () {
+    Route::get('/nearly-expired', [ProductController::class, 'nearlyExpired'])->name('products.nearly-expired');
+    Route::get('/expired', [ProductController::class, 'expired'])->name('products.expired');
+});
